@@ -3,7 +3,7 @@ name = "SigmaOS-bottles"
 tier = 2
 stability = "scaffold"
 language = "rust"
-description = "bottles component"
+description = "Bottles"
 upstream = []
 
 [contract]
