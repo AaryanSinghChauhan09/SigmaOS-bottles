@@ -1,9 +1,32 @@
-//! SigmaOS-bottles — thin CLI entry point.
-//!
-//! The component library lives in `src/lib.rs`; this binary is a minimal
-//! entry that reports the component is present. Real behaviour is in the
-//! library crate and exercised by its unit/integration tests.
+use bottles::{BottleConfig, BottleEnvironment, BottleManager};
+use clap::{Parser, Subcommand};
+use std::process;
+
+#[derive(Parser)]
+#[command(name = "sigmaos-bottles", about = "SigmaOS Wine-Bottle Manager")]
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
+}
+
+#[derive(Subcommand)]
+enum Commands {
+    /// Print a sample gaming bottle configuration JSON
+    Sample,
+}
 
 fn main() {
-    println!("SigmaOS-bottles: ok");
+    let cli = Cli::parse();
+    match cli.command {
+        Commands::Sample => {
+            let mut mgr = BottleManager::new();
+            let b = BottleConfig::new("Gaming", BottleEnvironment::Gaming, "/var/lib/bottles/gaming")
+                .unwrap_or_else(|e| {
+                    eprintln!("Error: {}", e);
+                    process::exit(1);
+                });
+            let _ = mgr.create_bottle(b);
+            println!("{}", mgr.to_json().unwrap());
+        }
+    }
 }

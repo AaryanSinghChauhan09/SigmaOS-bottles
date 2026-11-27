@@ -1,10 +1,9 @@
-// Integration test for SigmaOS-bottles
-// Verifies the crate builds and links as a dependency.
-#![allow(unused_imports)]
-
-use bottles as _;
+use bottles::{BottleConfig, BottleEnvironment, BottleManager};
 
 #[test]
-fn crate_links_and_runs() {
-    assert_eq!(2 + 2, 4);
+fn crate_links_and_manages_bottles() {
+    let mut mgr = BottleManager::new();
+    let bottle = BottleConfig::new("App", BottleEnvironment::Application, "/tmp/app").unwrap();
+    mgr.create_bottle(bottle).unwrap();
+    assert_eq!(mgr.list_names(), vec!["App"]);
 }
